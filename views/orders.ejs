@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History</title>
+    <link rel="stylesheet" href="/css/orders.css">
+</head>
+<body>
+    <h1>Order History</h1>
+    <% if(orders.length > 0) { %>
+        <% orders.forEach(function(order, index){ %>
+            <div>
+                <h2>Order <%= index + 1 %></h2>
+                <p>Date: <%= new Date(order.orderDate).toLocaleDateString() %></p> <!-- Using 'orderDate' field here -->
+                <ul>
+                    <% order.orderedItems.forEach(function(item){ %>
+                        <li>
+                            <img src="<%= item.image %>" alt="<%= item.name %>"> <!-- Image tag added here -->
+                            <h3><%= item.name %></h3>
+                          
+                        </li>
+                    <% }) %>
+                </ul>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <h2>You have no orders yet</h2>
+    <% } %>
+    <a href="/home">Back to Home</a>
+</body>
+</html>

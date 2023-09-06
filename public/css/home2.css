@@ -1,0 +1,116 @@
+@font-face {
+    font-family: 'CustomFont';
+    src: url('CustomFont.woff2') format('woff2'),
+         url('CustomFont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'CustomFont', Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    padding: 10px;
+    background-color: #eae7dc;
+}
+
+.container {
+    width: 90%;
+    margin: auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+    background-color: #e85a4f;
+    color: #eae7dc;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+h1 {
+    color: #eae7dc;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+aside.category-select {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+section.items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    column-gap: 20px;
+    transition: all 0.5s ease-in-out;
+}
+
+.item-card {
+    border: 1px solid #8e8d8a;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #d8c3a5;
+    transition: all 0.5s ease-in-out;
+}
+
+.item-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+.item-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.item-card h3 {
+    margin: 10px 0;
+    color: #1a1a1a;
+}
+
+button, .show-items-btn {
+    background-color: #ff4081;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    transition: all 0.5s;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover, .show-items-btn:hover {
+    background-color: #ff2d74;
+}
+
+footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #e85a4f;
+    color: #eae7dc;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+footer a {
+    padding: 10px 20px;
+    color: #eae7dc;
+    background-color: #8e8d8a;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.5s ease-in-out;
+}
+
+footer a:hover {
+    background-color: #6a6a66;
+    transform: scale(1.1);
+}

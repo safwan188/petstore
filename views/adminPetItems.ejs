@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="/css/adminPanel.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Pet Items</title>
+</head>
+<body>
+    <h1>Edit Pet Items</h1>
+    <ul>
+        <% petItems.forEach(function(petItem, index){ %>
+            <li>
+                <h3><%= petItem.name %></h3>
+                <p>Description: <%= petItem.description %></p>
+                <img src="<%= petItem.image %>" alt="<%= petItem.name %> image" width="100px" /> <!-- Display the image -->
+
+                <!-- Update Pet Item -->
+                <form id="updatePetItemForm<%= index %>">
+                    <input type="text" name="name" placeholder="New pet item name" value="<%= petItem.name %>" required>
+                    
+                    <input type="text" name="description" placeholder="Pet item description" value="<%= petItem.description %>"> <!-- Input field for description -->
+                    
+                    <input type="number" name="price" placeholder="Price" value="<%= petItem.price %>"> <!-- Input field for price -->
+                
+                    <input type="text" name="category" placeholder="Category" value="<%= petItem.category %>"> <!-- Input field for category -->
+                
+                    <input type="text" name="image" placeholder="Image file name" value="<%= petItem.image %>">
+                    <small>Make sure the image is in the public/images directory</small> <!-- Note about image requirement -->
+                
+                    <button type="submit">Update Pet Item</button>
+                    <p id="updateError<%= index %>" style="color:red;"></p> <!-- Error message -->
+                </form>
+
+                <!-- Delete Pet Item -->
+                <button id="deletePetItemButton<%= index %>">Delete Pet Item</button>
+                <p id="deleteError<%= index %>" style="color:red;"></p> <!-- Error message -->
+            </li>
+        <% }) %>
+    </ul>
+    <h2>Add New Pet Item</h2>
+    <form id="addPetItemForm">
+        <input type="text" name="name" placeholder="Pet Item Name" required>
+        <input type="text" name="description" placeholder="Description" required> <!-- New input field for description -->
+        <input type="number" name="price" placeholder="Price" required>
+        <input type="text" name="category" placeholder="Category" required>
+        <input type="hidden" name="petId" id="petIdField">
+        <input type="text" name="image" placeholder="Image File Name">
+        <small>Make sure the image is in the public/images directory</small>
+        <button type="submit">Add Pet Item</button>
+        <p id="addFormError" style="color:red;"></p> <!-- Changed ID for clarity -->
+    </form>
+    <a href="/admin/pets">Back to Pets</a>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      function setPetIdField() {
+    const urlParts = window.location.pathname.split('/');
+    const petId = urlParts[urlParts.length - 2]; // Extracts petId from the URL structure '/admin/pets/{petId}/items'
+    $('#petIdField').val(petId); // Set the value of the petIdField input to the extracted petId
+}
+
+// Call the function when the page loads
+$(document).ready(function() {
+    setPetIdField();
+});
+
+
+        <% petItems.forEach(function(petItem, index){ %>
+            // AJAX call to update a pet item
+            $('#updatePetItemForm<%= index %>').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/admin/petItems/update/<%= petItem._id %>',
+                    method: 'PUT',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        location.reload(); // Refresh the page on success
+                    },
+                    error: function(jqXHR) {
+                        $('#updateError<%= index %>').text(jqXHR.responseText); // Display error message
+                    }
+                });
+            });
+
+            // AJAX call to delete a pet item
+            $('#deletePetItemButton<%= index %>').on('click', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/admin/petItems/delete/<%= petItem._id %>',
+                    method: 'DELETE',
+                    success: function(response) {
+                        location.reload(); // Refresh the page on success
+                    },
+                    error: function(jqXHR) {
+                        $('#deleteError<%= index %>').text(jqXHR.responseText); // Display error message
+                    }
+                });
+            });
+        <% }) %>
+        $('#addPetItemForm').on('submit', function(e) {
+    e.preventDefault();
+
+    $.ajax({
+        url: '/admin/petitems/add',
+        method: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+            location.reload();
+        },
+        error: function(jqXHR) {
+            $('#addError').text(jqXHR.responseJSON.error);
+        }
+    });
+});
+
+
+
+
+    </script>
+</body>
+</html>

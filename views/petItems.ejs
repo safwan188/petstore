@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/css/petitems.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Items</title>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><%= pet.name %>'s Items</h1>
+        </header>
+        <!-- Dropdown to select category -->
+        <aside class="category-select">
+            <label for="category-select">Select Category:</label>
+            <select id="category-select" onchange="window.location.href=this.value;">
+                <option value="">All</option>
+                <% categories.forEach(function(category) { %>
+                    <option value="/pets/<%= pet._id %>/items/<%= category %>"><%= category %></option>
+                <% }) %>
+            </select>
+            <label for="price-select">Select Price:</label>
+            <select id="price-select">
+                <option value="">Any</option>
+                <option value="low">Low to High</option>
+                <option value="high">High to Low</option>
+            </select>
+        </aside>
+        <section class="items-grid">
+            <% petItems.forEach(function(petItem){ %>
+                <div class="item-card">
+                    <img src="<%= petItem.image %>" alt="<%= petItem.name %>">
+                    <h3><%= petItem.name %></h3>
+                    <p>Price: <%= petItem.price %></p>
+                    <p>Category: <%= petItem.category %></p>
+                    <p>Description: <%= petItem.description %></p>
+                    <button class="add-to-cart" data-pet-item-id="<%= petItem._id %>">Add to Cart</button>
+                </div>
+            <% }) %>
+        </section>
+        <footer>
+            <a href="/home">Back to Home</a>
+            <a href="/orders/cart">Go to Cart</a>
+        </footer>
+    </div>
+    <script>
+         document.getElementById('price-select').addEventListener('change', function() {
+    const selectedValue = this.value;
+    let sortedPetItems;
+
+    switch(selectedValue) {
+        case 'low':
+            sortedPetItems = [...document.querySelectorAll('.item-card')].sort((a, b) => {
+                const priceA = parseFloat(a.querySelector('p').textContent.split(":")[1].trim());
+                const priceB = parseFloat(b.querySelector('p').textContent.split(":")[1].trim());
+                return priceA - priceB;
+            });
+            break;
+        case 'high':
+            sortedPetItems = [...document.querySelectorAll('.item-card')].sort((a, b) => {
+                const priceA = parseFloat(a.querySelector('p').textContent.split(":")[1].trim());
+                const priceB = parseFloat(b.querySelector('p').textContent.split(":")[1].trim());
+                return priceB - priceA;
+            });
+            break;
+        default:
+            sortedPetItems = document.querySelectorAll('.item-card');
+            break;
+    }
+
+    // Now reappend the sorted items to the grid
+    const itemsGrid = document.querySelector('.items-grid');
+    itemsGrid.innerHTML = ''; // Clear current items
+    sortedPetItems.forEach(item => {
+        itemsGrid.appendChild(item);
+    });
+});
+
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', event => {
+                const petItemId = event.target.dataset.petItemId;
+
+                fetch('/orders/add-to-cart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ petItemId }),
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                }).then(data => {
+                    alert('Item added to cart');
+                }).catch(error => {
+                    console.error('Error:', error);
+                    alert('Error adding item to cart');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

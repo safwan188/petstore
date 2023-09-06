@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="/css/adminPanel.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Welcome, Admin</h1>
+    <button onclick="location.href='/admin/pets'">Pets</button>
+    <button onclick="location.href='/admin/orders'">Orders</button>
+    <button onclick="location.href='/admin/users'">Users</button>
+    <button onclick="location.href='/admin/graphs'">Graphs</button>
+    <button onclick="location.href='/admin/chats'">Chats</button> <!-- Chats button added -->
+    <button id="tweetButton">Post Tweet</button>
+    <script>
+    $(document).ready(function() {
+        $('#tweetButton').on('click', function(e) {
+            e.preventDefault();
+            const tweet = "New pets and pet items in our store! Visit us today.";
+            $.ajax({
+                url: '/admin/postTweet',
+                type: 'POST',
+                data: JSON.stringify({status: tweet}),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                async: false,
+                success: function(msg) {
+                    alert(msg);
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>

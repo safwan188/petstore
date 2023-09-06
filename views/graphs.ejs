@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        /* Add some style to your SVGs or other elements */
+        svg {
+            width: 100%;
+            height: 600px; /* Increase the height to make room for the axes */
+        }
+    </style>
+</head>
+<body>
+    <h1>Statistics</h1>
+
+    <h2>Total Sales Over the Month</h2>
+    <svg id="sales-chart"></svg>
+
+    <h2>Average Orders for User Per Month</h2>
+    <svg id="orders-chart"></svg>
+
+    <script>
+        const margin = {top: 20, right: 20, bottom: 50, left: 70}; /* Define margins for the chart */
+        const width = 800 - margin.left - margin.right; /* Adjust the width and height according to the margins */
+        const height = 500 - margin.top - margin.bottom;
+
+        fetch('/admin/sales-data')
+    .then(response => response.json())
+    .then(data => {
+        const svg = d3.select('#sales-chart')
+            .append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+        // Create a new field for the x-axis using the month and year
+        data.forEach(d => {
+            d.date = `${d.month}/${d.year}`;
+        });
+
+        const xScale = d3.scaleBand().domain(data.map(d => d.date)).range([0, width]).padding(0.2);
+        const yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.sales)]).range([height, 0]);
+
+        svg.selectAll('rect')
+            .data(data)
+            .join('rect')
+            .attr('x', d => xScale(d.date))
+            .attr('y', d => yScale(d.sales))
+            .attr('width', xScale.bandwidth())
+            .attr('height', d => height - yScale(d.sales))
+            .attr('fill', 'steelblue');
+
+        // Adding X Axis
+        svg.append('g')
+            .attr('transform', 'translate(0,' + height + ')')
+            .call(d3.axisBottom(xScale));
+
+        // Adding Y Axis
+        svg.append('g')
+            .call(d3.axisLeft(yScale));
+    })
+    .catch(error => console.error('Error:', error));
+
+        fetch('/admin/orders-data')
+            .then(response => response.json())
+            .then(data => {
+                const svg = d3.select('#orders-chart')
+                    .append('g')
+                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')'); /* Move the chart area to the center of the SVG */
+
+                const xScale = d3.scaleBand().domain(data.map(d => d.username)).range([0, width]).padding(0.2);
+                const yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.count)]).range([height, 0]); /* Adjust the range according to the adjusted height */
+
+                svg.selectAll('rect')
+                    .data(data)
+                    .join('rect')
+                    .attr('x', d => xScale(d.username))
+                    .attr('y', d => yScale(d.count))
+                    .attr('width', xScale.bandwidth())
+                    .attr('height', d => height - yScale(d.count)) /* Adjust the height according to the adjusted height */
+                    .attr('fill', 'steelblue');
+
+                // Adding X Axis
+                svg.append('g')
+                    .attr('transform', 'translate(0,' + height + ')') /* Move the x-axis to the bottom of the chart area */
+                    .call(d3.axisBottom(xScale));
+
+                // Adding Y Axis
+                svg.append('g')
+                    .call(d3.axisLeft(yScale));
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>

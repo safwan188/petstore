@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="/css/home.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA300Ej6ATsrOZr-e70qUaRc8D6jPBJ1qc"></script>
+</head>
+<body>
+    <header class="top-container">
+        <div class="container">
+            <h1>Welcome, <%= username %>!</h1>
+        </div>
+        <nav>
+            
+            <button id="logout-btn">Logout</button>
+            <a href="/orders/cart" class="cart-btn"><i class="fas fa-shopping-cart"></i>Go to Cart</a>
+            <a href="/home/all" class="all-pets-btn">View All Pets</a>
+            <a href="admin" class="all-pets-btn">admin</a>
+            <a href="chat" class="all-pets-btn">support</a>
+        </nav>
+    </header>
+    <aside id="weather-section" class="container">
+        <h2>Current Weather:</h2>
+        <div id="weather">Loading...</div>
+    </aside>
+    <main class="container">
+        <div class="video-container">
+            <video src="/videos/vid.mp4" controls></video>
+        </div>
+        <div id="map-section">
+            <h2>Our Branches:</h2>
+            <select id="branch-list"></select>
+            <div id="mapid"></div>
+        </div>
+    </main>
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2023 Company Name. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+
+     
+    <script>
+        // your OpenWeatherMap API key
+        const API_KEY = '31e06902409b5126aa0b0cb0aa0c9db0';
+        const LOCATION = 'tel aviv, ISRAEL';  // Default location
+
+        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${LOCATION}&units=imperial&appid=${API_KEY}`)
+        .then(response => response.json())
+        .then(data => {
+            const weatherDiv = document.getElementById('weather');
+            weatherDiv.innerHTML = `
+                <h3>${data.name}</h3>
+                <p>${data.weather[0].main} - ${data.weather[0].description}</p>
+                <p>Temperature: ${data.main.temp}�F</p>
+            `;
+        })
+        .catch(error => console.error('Error:', error));
+
+        // Google map
+       var mapOptions = {
+    zoom: 10,
+    center: new google.maps.LatLng(31.0461, 34.8516), // center map on Tel Aviv
+};
+var map = new google.maps.Map(document.getElementById('mapid'), mapOptions);
+
+
+        // Replace this with a fetch to your actual backend API for branch data.
+        fetch('/branches')
+        .then(response => response.json())
+        .then(branches => {
+            // Get reference to the dropdown list
+            const branchList = document.getElementById('branch-list');
+
+            branches.forEach(branch => {
+                // Add a marker for the branch on the map
+                var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(branch.lat, branch.lon),
+                    map: map,
+                    title: branch.name,
+                });
+
+                // Add InfoWindow
+                var infowindow = new google.maps.InfoWindow({
+                    content: branch.name
+                });
+
+                // Show InfoWindow when marker is clicked
+                marker.addListener('click', function() {
+                    infowindow.open(map, marker);
+                });
+
+                // Add an option to the dropdown for the branch
+                const option = document.createElement('option');
+                option.value = branch.name;
+                option.text = branch.name;
+                branchList.appendChild(option);
+            });
+
+            // Add event listener to the dropdown
+            branchList.addEventListener('change', function() {
+                // Find the selected branch
+                const selectedBranch = branches.find(branch => branch.name === this.value);
+
+                // Update the map to show the selected branch
+                map.setCenter(new google.maps.LatLng(selectedBranch.lat, selectedBranch.lon));
+                map.setZoom(10);
+            });
+        });
+        const logoutBtn = document.getElementById('logout-btn');
+
+// Add event listener for click events
+logoutBtn.addEventListener('click', function() {
+    fetch('/logout')
+    .then(response => {
+        if(response.redirected) {
+            // If the response included a redirect, follow it
+            window.location.href = response.url;
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+    </script>
+</body>
+</html>

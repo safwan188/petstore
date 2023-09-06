@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="/css/adminPanel.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Pets</title>
+</head>
+<body>
+    <h1>Pets</h1>
+    <!-- Create Pet -->
+    <form id="createPetForm">
+        <input type="text" name="name" placeholder="Pet name" required>
+        <input type="text" name="breed" placeholder="Pet breed" required>
+        <input type="text" name="image" placeholder="Pet image" required>
+        <button type="submit">Create Pet</button>
+        <p id="createError" style="color:red;"></p> <!-- Error message -->
+    </form>
+
+    <ul>
+        <% pets.forEach(function(pet, index){ %>
+            <li>
+                <h3><%= pet.name %></h3>
+                <p>Breed: <%= pet.breed %></p>
+                <img src="<%= pet.image %>" alt="<%= pet.name %> image" width="100px" /> <!-- Display the image -->
+
+                <!-- Update Pet -->
+                <form id="updatePetForm<%= index %>">
+                    <input type="text" name="name" placeholder="New pet name" required>
+                    <input type="text" name="breed" placeholder="New pet breed" required>
+                    <input type="text" name="image" placeholder="Image file name" value="<%= pet.image %>"> <!-- New input field for the image -->
+                    <small>Make sure the image is in public/images directory</small> <!-- Note about image requirement -->
+                    <button type="submit">Update Pet</button>
+                    <p id="updateError<%= index %>" style="color:red;"></p> <!-- Error message -->
+                </form>
+                 <button onclick="window.location.href='/admin/pets/<%= pet._id %>/items'">View Pet Items</button>
+                <!-- Delete Pet -->
+                <button id="deletePetButton<%= index %>">Delete Pet</button>
+                <p id="deleteError<%= index %>" style="color:red;"></p> <!-- Error message -->
+            </li>
+        <% }) %>
+    </ul>
+    <a href="/admin">Back to Admin Panel</a>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // AJAX call to create a pet
+        $('#createPetForm').on('submit', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: '/admin/pets/create',
+                method: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    location.reload(); // Refresh the page on success
+                },
+                error: function(jqXHR) {
+                    $('#createError').text(jqXHR.responseText); // Display error message
+                }
+            });
+        });
+
+        <% pets.forEach(function(pet, index){ %>
+            // AJAX call to update a pet
+            $('#updatePetForm<%= index %>').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/admin/pets/update/<%= pet._id %>',
+                    method: 'PUT',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        location.reload(); // Refresh the page on success
+                    },
+                    error: function(jqXHR) {
+                        $('#updateError<%= index %>').text(jqXHR.responseText); // Display error message
+                    }
+                });
+            });
+
+            // AJAX call to delete a pet
+            $('#deletePetButton<%= index %>').on('click', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/admin/pets/delete/<%= pet._id %>',
+                    method: 'DELETE',
+                    success: function(response) {
+                        location.reload(); // Refresh the page on success
+                    },
+                    error: function(jqXHR) {
+                        $('#deleteError<%= index %>').text(jqXHR.responseText); // Display error message
+                    }
+                });
+            });
+        <% }) %>
+    </script>
+</body>
+</html>

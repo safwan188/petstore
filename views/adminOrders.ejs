@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="/css/adminPanel.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Orders</title>
+</head>
+<body>
+    <h1>Orders</h1>
+    <ul>
+        <% orders.forEach(function(order, index){ %>
+            <li>
+                <h3>Order ID: <%= order._id %></h3>
+                <p>Username: <%= order.username %></p>
+                <p>Items: <%= order.orderedItems.map(item => item.name).join(", ") %></p>
+
+                <!-- Delete Order -->
+                <button id="deleteOrderButton<%= index %>">Delete Order</button>
+                <p id="deleteError<%= index %>" style="color:red;"></p> <!-- Error message -->
+            </li>
+        <% }) %>
+    </ul>
+    <a href="/admin">Back to Admin Panel</a>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        <% orders.forEach(function(order, index){ %>
+            // AJAX call to delete an order
+            $('#deleteOrderButton<%= index %>').on('click', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/admin/orders/delete/<%= order._id %>',
+                    method: 'POST',
+                    success: function(response) {
+                        location.reload(); // Refresh the page on success
+                    },
+                    error: function(jqXHR) {
+                        $('#deleteError<%= index %>').text(jqXHR.responseText); // Display error message
+                    }
+                });
+            });
+        <% }) %>
+    </script>
+</body>
+</html>

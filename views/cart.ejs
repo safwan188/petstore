@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/css/cart.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Your Cart</h1>
+        </header>
+        <div class="cart-grid">
+            <%order.totalPrice=0%> <!-- Added total price -->
+
+            <% order.orderedItems.forEach(function(item, index){ %>
+                <%order.totalPrice+=item.price%>
+                <div class="item-card">
+                    <img src="<%= item.image %>" alt="<%= item.name %>">
+                    <h3><%= item.name %></h3>
+                    
+                    <p>Price: <%= item.price %></p> <!-- Added item price -->
+                    <button class="remove-from-cart" data-item-id="<%= item._id %>">Remove from Cart</button>
+                </div>
+            <% }) %>
+        </div>
+        <footer>
+            <h2>Total Price: <%= order.totalPrice %></h2> <!-- Added total price -->
+            <button id="placeOrderButton">Place Order</button>
+            <button id="orderHistoryButton">Order History</button>
+            <a href="/home">Back to Home</a>
+        </footer>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io();
+</script>
+    <script>
+        
+
+       
+
+        document.getElementById('placeOrderButton').addEventListener('click', function() {
+        fetch('/orders/<%= order._id %>/placed', {
+            method: 'PUT',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            } else if (response.redirected) {
+                // If the response included a redirect, follow it
+                window.location.href = response.url;
+            } else {
+                return response.json();
+            }
+        })
+        .then(data => {
+            if (data) {
+                alert('Order placed successfully');
+                window.location.href = "/home"; // Redirect to the home page
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error placing order');
+        });
+    });
+        document.querySelectorAll('.remove-from-cart').forEach(button => {
+            button.addEventListener('click', event => {
+                const itemId = event.target.dataset.itemId;
+                fetch('/orders/removeFromCart/' + itemId, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ petItemId: itemId }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert('Item removed from cart');
+                    location.reload(); // Reload the page to update the list
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error removing item from cart');
+                });
+            });
+        });
+
+        // New code to handle order history button click
+        document.getElementById('orderHistoryButton').addEventListener('click', function() {
+            // Assuming '/orders/history' is the endpoint for fetching order history
+            window.location.href = "/orders/history";
+        });
+    </script>
+</body>
+</html>

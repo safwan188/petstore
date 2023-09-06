@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="/css/adminPanel.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Users</title>
+</head>
+<body>
+    <h1>Users</h1>
+    <!-- Create User -->
+  <!-- Create User -->
+<form id="createUserForm">
+    <input type="text" name="username" placeholder="Username" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button type="submit">Create User</button>
+    <p id="createError" style="color:red;"></p> <!-- Error message -->
+</form>
+
+
+    <ul>
+        <% users.forEach(function(user, index){ %>
+            <li>
+                <h3>Username: <%= user.username %></h3>
+                <h3>Password: <%= user.password %></h3>
+                <!-- Update User -->
+                <form id="updateUserForm<%= index %>">
+                    <input type="text" name="username" placeholder="New username" required>
+                     <input type="text" name="password" placeholder="New password" required>
+                    <button type="submit">Update Username</button>
+                    <p id="updateError<%= index %>" style="color:red;"></p> <!-- Error message -->
+                </form>
+
+                <!-- Delete User -->
+                <button id="deleteUserButton<%= index %>">Delete User</button>
+                <p id="deleteError<%= index %>" style="color:red;"></p> <!-- Error message -->
+            </li>
+        <% }) %>
+    </ul>
+    <a href="/admin">Back to Admin Panel</a>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+ // AJAX call to create a user
+$('#createUserForm').on('submit', function(e) {
+    e.preventDefault();
+    $.ajax({
+        url: '/admin/users/create',
+        method: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+            location.reload(); // Refresh the page on success
+        },
+        error: function(jqXHR) {
+            $('#createError').text(jqXHR.responseText); // Display error message
+        }
+    });
+});
+
+
+    <% users.forEach(function(user, index){ %>
+    // AJAX call to update a user
+    $('#updateUserForm<%= index %>').on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/admin/users/update/<%= user._id %>',
+            method: 'PUT',
+            data: $(this).serialize(),
+            success: function(response) {
+                location.reload(); // Refresh the page on success
+            },
+            error: function(jqXHR) {
+                $('#updateError<%= index %>').text(jqXHR.responseText); // Display error message
+            }
+        });
+    });
+
+            // AJAX call to delete a user
+            $('#deleteUserButton<%= index %>').on('click', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/admin/users/delete/<%= user._id %>',
+                    method: 'POST',
+                    success: function(response) {
+                        location.reload(); // Refresh the page on success
+                    },
+                    error: function(jqXHR) {
+                        $('#deleteError<%= index %>').text(jqXHR.responseText); // Display error message
+                    }
+                });
+            });
+        <% }) %>
+    </script>
+</body>
+</html>

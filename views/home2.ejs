@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/css/home2.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+   <div class="container">
+        <header>
+            <h1>Welcome, <%= username %>!</h1>
+            <button id="logout-btn">Logout</button>
+        </header>
+
+        <aside class="category-select">
+            <a href="/orders/cart" class="cart-btn">Go to Cart</a>
+        </aside>
+
+        <section class="items-grid" id="pets-grid">
+            <% pets.forEach(function(pet){ %>
+                <div class="item-card">
+                    <img src="<%= pet.image %>" alt="<%= pet.name %>">
+                    <div class="pet-info">
+                        <h3><%= pet.name %></h3>
+                        <p><%= pet.breed %>, <%= pet.age %> years old</p>
+                        <form action="/pets/<%= pet._id %>/items" method="GET">
+                            <button type="submit" class="show-items-btn">Show Items for <%= pet.name %></button>
+                        </form>
+                    </div>
+                </div>
+            <% }) %>
+        </section>
+
+        <footer>
+            <canvas id="footer-canvas" width="800" height="10"></canvas>
+        </footer>
+    </div>
+    <script>
+        const petList = document.getElementById('pet-list');
+
+        petList && petList.addEventListener('change', function() {
+            const selectedPetName = this.value;
+            window.location.href = `/home/${selectedPetName}`;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Admin Page</title>
+    <style>
+      /* Add your styles here */
+      body {
+        font-family: Arial, sans-serif;
+      }
+
+      #users {
+        margin-bottom: 20px;
+      }
+
+      #users p {
+        cursor: pointer;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 5px;
+        border-radius: 5px;
+        background-color: #f8f8f8;
+      }
+
+      #users p:hover {
+        background-color: #eee;
+      }
+
+      #chat {
+        height: 300px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+        overflow-y: scroll;
+      }
+
+      #chat p {
+        margin: 0;
+        padding: 5px;
+        border-bottom: 1px solid #eee;
+      }
+
+      #messageForm {
+        display: flex;
+        margin-bottom: 20px;
+      }
+
+      #message {
+        flex-grow: 1;
+      }
+
+      #chat-dialog .ui-dialog-titlebar-close {
+        display: none;
+      }
+
+      #close-chat {
+        display: none;
+        margin-bottom: 20px;
+      }
+    </style>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  </head>
+  <body>
+    <h1>Welcome, Admin!</h1>
+    <p>Here are the messages from users:</p>
+    <div id="users">
+      <!-- Users will be dynamically added here -->
+    </div>
+    <button id="close-chat">Close Chat</button>
+    <div id="chat-dialog" title="Chat" style="display: none;">
+      <div id="chat">
+        <!-- Chats will be dynamically added here -->
+      </div>
+      <form id="messageForm">
+          <label for="message">Message:</label>
+          <input id="message" type="text" required>
+          <input type="submit" value="Send">
+      </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+      $(function () {
+        var socket = io();
+        var currentRoom = null;
+
+        // Create the chat dialog
+        $("#chat-dialog").dialog({
+          autoOpen: false,
+          width: 400,
+          modal: true,
+          close: function() {
+            // When the chat dialog is closed, hide the "Close Chat" button and clear the chat box
+            $("#close-chat").hide();
+            $("#chat").empty();
+            currentRoom = null;
+          }
+        });
+
+        // When the "Close Chat" button is clicked, close the chat dialog
+        $("#close-chat").click(function() {
+          $("#chat-dialog").dialog("close");
+        });
+
+        // Get the list of users
+        $.get("/admin/getUsers", function(data) {
+          data.forEach(function(user) {
+            // Append the user to the users list
+            var userElement = $("<p>").text(user).on('click', function() {
+              // Load this user's chats
+              currentRoom = user;
+              loadUserChats(user);
+            });
+            $("#users").append(userElement);
+          });
+        });
+
+        function loadUserChats(username) {
+          // Get this user's chats
+          $.get("/admin/getChats/" + username, function(data) {
+            data.forEach(function(chat) {
+              // Append each chat message to the chat div
+              var chatElement = $("<p>").text(chat.from + ': ' + chat.message);
+              $("#chat").append(chatElement);
+            });
+            // Scroll to the bottom of the chat
+            $("#chat").scrollTop($("#chat")[0].scrollHeight);
+            // Open the chat dialog and show the "Close Chat" button
+            $("#chat-dialog").dialog("open");
+            $("#close-chat").show();
+          });
+        }
+
+        // Listen to a chat message
+        socket.on('chat message', function(data) {
+          if (data.from === currentRoom || data.to === currentRoom) {
+            var chatElement = $("<p>").text(data.from + ': ' + data.message);
+            $("#chat").append(chatElement);
+            // Scroll to the bottom of the chat
+            $("#chat").scrollTop($("#chat")[0].scrollHeight);
+          }
+        });
+
+        // Handle form submission
+        $("#messageForm").on("submit", function(e) {
+          e.preventDefault();
+          const message = $("#message").val();
+          socket.emit('chat message', { from: 'admin', to: currentRoom, msg: message });
+          $("#message").val("");
+        });
+      });
+    </script>
+  </body>
+</html>

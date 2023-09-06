@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+  <head>
+    <title>User Chat Page</title>
+    <style>
+      /* Add your styles here */
+      body {
+        font-family: Arial, sans-serif;
+      }
+
+      #chat {
+        height: 300px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+        overflow-y: scroll;
+      }
+
+      #chat p {
+        margin: 0;
+        padding: 5px;
+        border-bottom: 1px solid #eee;
+      }
+
+      #messageForm {
+        display: flex;
+      }
+
+      #message {
+        flex-grow: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Welcome, User!</h1>
+    <p>Here you can chat with our support team:</p>
+    <div id="chat">
+      <!-- Chats will be dynamically added here -->
+    </div>
+    <form id="messageForm">
+        <label for="message">Message:</label>
+        <input id="message" type="text" required>
+        <input type="submit" value="Send">
+    </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(function () {
+        var socket = io();
+
+        // Get the username
+        var username = '';
+        $.get('/getUsername', function(data){
+          username = data.username;
+          loadUserChats();
+        });
+
+        function loadUserChats() {
+          // Get this user's chats with admin
+          $.get("/getChats", function(data) {
+            data.forEach(function(chat) {
+              // Append each chat message to the chat div
+              var chatElement = $("<p>").text(chat.from + ': ' + chat.message);
+              $("#chat").append(chatElement);
+            });
+            // Scroll to the bottom of the chat
+            $("#chat").scrollTop($("#chat")[0].scrollHeight);
+          });
+        }
+
+        // Listen to a chat message
+        socket.on('chat message', function(data) {
+          if (data.to === username || data.from === username) {
+            var chatElement = $("<p>").text(data.from + ': ' + data.message);
+            $("#chat").append(chatElement);
+            // Scroll to the bottom of the chat
+            $("#chat").scrollTop($("#chat")[0].scrollHeight);
+          }
+        });
+
+        // Handle form submission
+        $("#messageForm").on("submit", function(e) {
+          e.preventDefault();
+          const message = $("#message").val();
+          socket.emit('chat message', { from: username, to: 'admin', msg: message });
+          $("#message").val("");
+        });
+        
+        // Load the user chats when the page loads
+        $(document).ready(function(){
+          loadUserChats();
+        });
+
+      });
+    </script>
+  </body>
+</html>

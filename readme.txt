@@ -41,7 +41,6 @@ npm install
 # Start the application
 node main.js
 Visit http://localhost:5000 in your browser to access the application.
-## Screenshots 📸
 
 ## Screenshots 📸
 
@@ -50,28 +49,30 @@ Visit http://localhost:5000 in your browser to access the application.
 ![Login Page](login.png)
 *Fig 1. The Login Page, where users can sign in to access the platform.*
 
-![Home Page](screenshots/home.jpg)
+![Home Page](home.png)
 *Fig 2. The Home Page greets users with a warm and inviting video of playful pets.*
 
-![Store Locator with Google Maps](screenshots/maps.jpg)
+![Store Locator with Google Maps](maps.png)
 *Fig 3. Find our physical branches easily with Google Maps integration.*
 
-![Pets Selection Page](screenshots/pets.jpg)
+![Pets Selection Page](pets.png)
 *Fig 4. The Pets Page, where users can browse through different pets.*
 
-![Product Browsing Page](screenshots/products.jpg)
+![Product Browsing Page](products.png)
 *Fig 5. The Products Page, showcasing a variety of items available for selected pets.*
 
-![Shopping Cart](screenshots/cart.jpg)
+![Shopping Cart](cart.png)
 *Fig 6. The Cart Page allows users to review items before checkout.*
 
 ### Admin Interface
 
-![Admin Panel](screenshots/adminpanel.jpg)
+![Admin Panel](adminpanel.png)
 *Fig 7. The Admin Panel provides an overview of store management options.*
 
-![Admin Panel Action](screenshots/adminpanel_action.jpg)
+![Admin Panel Action](adminpanel_action.png)
 *Fig 8. The Admin Panel in action, facilitating various administrative tasks.*
+
+
 
 ...
 

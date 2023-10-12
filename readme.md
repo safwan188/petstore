@@ -65,11 +65,14 @@ Visit http://localhost:5000 in your browser to access the application.
 *Fig 6. The Cart Page allows users to review items before checkout.*
 
 ### Admin Interface
-
+to ace
 ![Admin Panel](adminpanel.png)
 *Fig 7. The Admin Panel provides an overview of store management options.*
-
-![Admin Panel Action](adminpanel_action.png)
+to login as admin:
+username:admin
+password:123
+Visit http://localhost:5000/admin in your browser to access the adminpanel.
+![Admin Panel Action](adminpanelaction.png)
 *Fig 8. The Admin Panel in action, facilitating various administrative tasks.*
 
 

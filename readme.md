@@ -30,7 +30,7 @@ Ensure you have Node.js and MongoDB installed.
 sh
 Copy code
 # Clone the repository
-git clone [repo-link]
+git clone https://github.com/safwan188/petstore.git
 
 # Navigate to the project folder
 cd petstore

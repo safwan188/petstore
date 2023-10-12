@@ -43,16 +43,37 @@ node main.js
 Visit http://localhost:5000 in your browser to access the application.
 ## Screenshots 📸
 
-![Homepage Screenshot](path_to_image/homepage.png)
-*Fig 1. A glimpse of the Home Page featuring a warm welcome video of pets.*
+## Screenshots 📸
 
-![Product Page Screenshot](path_to_image/productpage.png)
-*Fig 2. The Product Page allows users to browse and filter through various pet-related items.*
+### User Interface
 
-![Admin Panel Screenshot](path_to_image/adminpanel.png)
-*Fig 3. The Admin Panel enables efficient management of store stock, orders, and user support.*
+![Login Page](login.png)
+*Fig 1. The Login Page, where users can sign in to access the platform.*
 
-![Google Maps Integration](path_to_image/googlemaps.png)
-*Fig 4. Google Maps integration helps users locate our physical branches.*
+![Home Page](screenshots/home.jpg)
+*Fig 2. The Home Page greets users with a warm and inviting video of playful pets.*
+
+![Store Locator with Google Maps](screenshots/maps.jpg)
+*Fig 3. Find our physical branches easily with Google Maps integration.*
+
+![Pets Selection Page](screenshots/pets.jpg)
+*Fig 4. The Pets Page, where users can browse through different pets.*
+
+![Product Browsing Page](screenshots/products.jpg)
+*Fig 5. The Products Page, showcasing a variety of items available for selected pets.*
+
+![Shopping Cart](screenshots/cart.jpg)
+*Fig 6. The Cart Page allows users to review items before checkout.*
+
+### Admin Interface
+
+![Admin Panel](screenshots/adminpanel.jpg)
+*Fig 7. The Admin Panel provides an overview of store management options.*
+
+![Admin Panel Action](screenshots/adminpanel_action.jpg)
+*Fig 8. The Admin Panel in action, facilitating various administrative tasks.*
+
+...
+
 
 
